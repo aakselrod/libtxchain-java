@@ -1,0 +1,87 @@
+The current version is only a proof of concept, and not at all usable for
+anything but very basic experimentation.
+
+To do items for pre-alpha:
+- Adding input validation, error checking, exception handling, concurrency,
+  peer authentication, private key security and other privacy, correctness,
+  and security features - most of this stuff is missing so I can get the demo
+  out ASAP - the code doesn't even check signatures right now, just signs
+  and trusts the other Peer object to sign correctly
+- Fixing key and transaction handling so that the proper information is sent
+  between objects, rather than having private key and transaction data cross
+  boundaries it shouldn't cross
+- Making each channel use a new key, and implementing it efficiently so
+  wallets don't have tons of old transactions sitting around
+- Adding anti-DoS measures
+- Adding documentation/comments and logging, fixing whitespace
+- Formally put all of these TODOs in the code comments
+- Fixing scope of class members to match API design
+- Replacing all polling and hacky listeners with correctly implemented
+  listeners and futures
+- Adding support for listeners in strategic places, especially at channel
+  establishment to decide on parameters, at channel teardown/renewal to
+  support renewal or to support finding a new partner, etc.
+- In general, fixing the code to follow best practices for Java programming,
+  Bitcoin programming, API design, etc.
+- Making sure the wallet class is used correctly and not left inconsistent
+- Fixing nLockTime usage to fit with how bitcoind actually uses it
+- Fixing payment channel state machine and factoring it out into its own
+  immutable class with additional functionality
+- Adding rollback functionality
+- Adding feedback and robust handling of payment flow requests/failures,
+  rollbacks, etc.
+- Fixing bugs (I know of multiple bugs but for demo purposes, they don't
+  really matter - particularly making sure that when demo ends before
+  everything finishes, wallets are still consistent
+- Watching for transactions to be committed to the block chain in a way that
+  is aware of transaction malleability (watch for transactions that spend
+  outputs we know instead of watching for specific transactions to get
+  committed) in every case, not just in PaymentChannel.checkExpire()
+- Checking for "implicitly" setup channels at the responder and channel setup
+  double-spends at both sides
+- Checking for "implicitly" closed/expired channels in more places
+- Supporting a maximum payment size for risk management, though sometimes
+  larger payments may be necessary to rebalance/renegotiate channels
+- Adding persistence and statefulness for all of the classes that need it
+- Allowing for intermediary fees to pass payments along, and fixing buggy
+  fee handling (ensure fee is always increased when changing direction,
+  which it is, but also ensure fee is always increased when sending first
+  payment over a channel)
+- Adding the capability for peer objects to communicate with each other over
+  various RPC implementations (at least something with protobuf) to make this
+  library actually usable
+- Refactoring the API so it makes sense, especially the encapsulation -
+  requires network-based RPC support and persistence and using independent
+  parts of BitcoinJ rather than the WalletAppKit
+
+To do items for alpha:
+- Writing tests for everything
+- Looking into using BIP 10 TxDPs to pass around contract transactions 
+- Breaking everything out into helper methods and making it less ugly
+- Adding channel rebalancing between multiple peers to avoid having to
+  renegotiate new channels
+- Using individual components of BitcoinJ instead of WalletAppKit
+
+To do items for beta:
+- Adding support for a back end other than BitcoinJ (probably BitsOfProof) for
+  more scalable intermediary peer operation, while BitcoinJ can be used for
+  endpoint peers so we can integrate with mobile wallets
+- Supporting wallet encryption, running different components in different
+  processes/on different machines, etc. for scalability and defense in depth
+- Adding routing of payments between intermediary nodes which already have
+  established channels between them
+- Adding abstracted-out support for Tor, I2P, IPv6, OnionCat, GarliCat, and
+  other network/transport layers for ability of nodes to reach each other
+
+Stretch goals and potential commercial features:
+- Splitting a payment between multiple channels and/or channel groups
+- Adding support for multiple channel/channel group setup methods to fit
+  different usage scenarios/risk profiles
+- Investigating support for multiple types of additional redemption criteria
+  (other than just hash preimage) to permit transaction types other than
+  simple payments
+- Adding support for whitelists, blacklists, payment logging, and other
+  optional AML compliance features for nodes that are run in jurisdictions
+  where the activities done by this library are regulated
+- Adding expected-profit-maximizing strategies to find new partners for
+  passing payments

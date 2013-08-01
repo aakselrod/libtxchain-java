@@ -1,0 +1,61 @@
+This is a proof of concept implementation of chained payment channels with two
+phase commit as described at https://bitcointalk.org/index.php?topic=152334
+
+The advantages are:
+
+- Instant low-trust payments from one party to any other using the same
+  payment intermediary or (eventually) a connected intermediary without
+  requiring storage of funds with the intermediary
+- Instant, indirect micropayments open up use cases such as instant point of
+  sale payments for small purchases like a stick of gum in a vending machine,
+  and micropayments to peers in peer-to-peer networks or access points in mesh
+  networks for allocation of resources
+- Escrow support is built-in
+- Payments can happen even when the network hash rate drops catastrophically,
+  with the caveat that channels can't be established or torn down without
+  network confirmation
+- Allows intermediary operators to earn Bitcoin-denominated income on their
+  bitcoins, hopefully funding full nodes that don't have to mine to earn money
+- Permits exchanges (including small, ad-hoc ones) where each trade doesn't
+  require a new on-chain transaction but the server can't run with your money
+
+One caveat is that participants will have to lock bitcoins into payment
+channels.  This can reduce supply available for sale and drive a higher
+exchange rate as this payment mechanism is adopted within the Bitcoin economy
+without requiring additional Bitcoin adoption.  However, it can also create
+risk of loss of bitcoins, as bitcoins locked into a contract are not stored
+offline.  This means that potential vulnerabilities may cause destruction or
+theft of value.
+
+The current version is only a proof of concept, and not at all usable for
+anything but very basic experimentation.
+
+If there's enough interest, I'll rewrite it into a usable library and set up a
+repository, issue tracker and wiki.  I'm busy with paying work and family, and
+my Java skills are quite rusty, so it'll take some time.  I will accept code
+contributions that are released to the public domain.  If payment processors
+or exchanges are interested in integrating this into their service offering,
+I can offer assistance.
+
+Contact information:
+
+LinkedIn		http://www.linkedin.com/in/alexakselrodrva
+BitcoinTalk		https://bitcointalk.org/index.php?action=profile;u=38311
+
+To test the demo:
+
+- Compile and run snapshot of bitcoind at
+  https://github.com/aakselrod/bitcoin/tree/stdpreimage 
+- Run it with the "regtest=1" option enabled in bitcoin.conf
+- Run "bitcoind setgenerate true" about 120 times to generate blocks
+- Run this project (it's set up for Maven as its dependencies are, too)
+- Send coins to the addresses for ep1, ep2 and im (endpoints and intermediary)
+- Run "bitcoind setgenerate true" enough times for the program to end
+- Use a local block explorer to look at the output
+
+Please DO NOT rely on the API in this demo; this is a proof of concept only
+and is not even pre-alpha quality.  See the TODO file for things that need
+to be done in order to bring this to pre-alpha stage.
+
+To support development of this project, please donate to:
+1AsgeF5gUquR3eaFcajHCYhSYzXGtLQcR8
